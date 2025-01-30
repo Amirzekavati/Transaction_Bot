@@ -8,6 +8,9 @@ BOT_PREFIX = os.getenv("BOT_PREFIX", "/")
 
 OWNER_ID = os.getenv("OWNER_ID")
 
+ALLOWD_USERS_ID = os.getenv("ALLOWD_USERS_ID","").split(",")
+ALLOWD_USERS_ID = [int(user_id.strip()) for user_id in ALLOWD_USERS_ID]
+
 DB_URL = os.getenv("DATABASE_URL")
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
