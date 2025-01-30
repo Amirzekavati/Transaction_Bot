@@ -6,10 +6,13 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 BOT_PREFIX = os.getenv("BOT_PREFIX", "/")
 
-OWNER_ID = os.getenv("OWNER_ID")
+OWNER_ID = int(os.getenv("OWNER_ID"))
 
-ALLOWD_USERS_ID = os.getenv("ALLOWD_USERS_ID","").split(",")
-ALLOWD_USERS_ID = [int(user_id.strip()) for user_id in ALLOWD_USERS_ID]
+ALLOWED_USERS_ID = os.getenv("ALLOWED_USERS_ID")
+if ALLOWED_USERS_ID:
+    ALLOWED_USERS_ID = [int(user_id.strip()) for user_id in ALLOWED_USERS_ID.split(",")]
+else:
+    ALLOWED_USERS_ID = []
 
 DB_URL = os.getenv("DATABASE_URL")
 

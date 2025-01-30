@@ -1,5 +1,5 @@
 from telegram.ext import CommandHandler
-from .handlers import start, help
+from handlers import start, help
 
 def get_handlers():
     return [
