@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from pymongo import MongoClient
+from database import AgentDataBase
 
 load_dotenv()
 
@@ -35,13 +35,8 @@ for var in required_vars:
     if not globals()[var]:
         raise ValueError(f"Missing required environment variable: {var}")
     
-try:
-    client = MongoClient(DB_URL)
-    db = client.get_database()
-    print("✅ Successfully connected to the database")
-except Exception as e:
-    print(f"❌ Failed to connect to the database: {e}")
-
+db = AgentDataBase()
+db.check_connection()
 
 print(f"✅ Config Loaded: Prefix={BOT_PREFIX}, Debug={DEBUG_MODE}")
 
