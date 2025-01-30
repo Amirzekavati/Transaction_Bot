@@ -1,6 +1,5 @@
 from pymongo import MongoClient, UpdateOne
 from pymongo.errors import PyMongoError
-from datetime import datetime
 
 class AgentDataBase:
     def __init__(self, client='mongodb://localhost:27017/', db_name='Transactions', collection_name='stocks'):
