@@ -3,7 +3,7 @@ from config import BOT_TOKEN
 from commands import get_handlers
 import asyncio
 
-if __name__ == "__main__":
+def main():
     application = Application.builder().token(BOT_TOKEN).build()
     
     for handler in get_handlers():
@@ -11,4 +11,7 @@ if __name__ == "__main__":
         
     print("🤖 Bot is starting...")
     application.run_polling()
+
+if __name__ == "__main__":
+    main()
     

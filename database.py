@@ -9,7 +9,7 @@ class AgentDataBase:
         self.collection = self.database[collection_name]
 
     def find_stocks(self, user_id, collection_name="Stocks"):
-        stocks_docs = self.database[collection_name].find({'UserId': user_id})
+        stocks_docs = self.database[collection_name].find({'UserID': user_id})
         if stocks_docs:
             for doc in stocks_docs:
                 print(f"{doc['StockName']} : {doc['StockAmount']}")
@@ -18,17 +18,17 @@ class AgentDataBase:
 
     # for insert document into database
     # if document exist replace into database
-    def upsert(self, message_dict ,collection_name):
+    def upsert(self, message_dict ,collection_name="Stocks"):
         existing_doc = self.database[collection_name].find_one({
             'StockName': message_dict['StockName'],
-            'UserId': message_dict['UserId']
+            'UserId': message_dict['UserID']
             }
         )
         # if we have disticnt data then replace
         if existing_doc:
             self.database[collection_name].replace_one({
                 'StockName': existing_doc['StockName'],
-                'UserId': message_dict['UserId']
+                'UserId': message_dict['UserID']
                 }, message_dict)
             print("replace the message")
         else:
