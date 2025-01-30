@@ -2,7 +2,7 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext
 from config import ALLOWED_USERS_ID, OWNER_ID
 
-USER_OPTIONS = [["📈 View Stock", "📉 Sell Stock"], ["📊 Portfolio", "ℹ️ Help"]]
+USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "ℹ️ Help"]]
 # ADMIN_OPTIONS = [["📢 Manage Channel", "🔍 Analyze Trends"], ["⚙️ Settings", "📊 Portfolio"], ["ℹ️ Help"]]
 
 async def start(update: Update, context: CallbackContext):
@@ -27,5 +27,4 @@ async def start(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
         
 async def help(update: Update, context: CallbackContext):
-    await update.message.reply_text("This bot is for help to buying and selling stock.\n \
-                                Here are the available commands: /start, /addStock, /volume")
+    await update.message.reply_text("This bot is for help to buying and selling stock.\n")

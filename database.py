@@ -2,29 +2,34 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
 class AgentDataBase:
-    def __init__(self, client='mongodb://localhost:27017/', db_name='Transactions', collection_name='stocks'):
+    def __init__(self, client='mongodb://localhost:27017/', db_name='Transaction', collection_name='Stocks'):
         # initialize database
         self.client = MongoClient(client)
         self.database = self.client[db_name]
         self.collection = self.database[collection_name]
 
-    def find_stock(self, stockName, collection_name="stock"):
-        stock_doc = self.database[collection_name].find_one({'StockName': stockName})
-        if stock_doc:
-            print(f"volume of stock is: {stock_doc['volume']}")
+    def find_stocks(self, user_id, collection_name="Stocks"):
+        stocks_docs = self.database[collection_name].find({'UserId': user_id})
+        if stocks_docs:
+            for doc in stocks_docs:
+                print(f"{doc['StockName']} : {doc['StockAmount']}")
         else:
-            print(f"No stock found for this name: {stockName}")
+            print(f"No found: {user_id}")
 
     # for insert document into database
     # if document exist replace into database
     def upsert(self, message_dict ,collection_name):
         existing_doc = self.database[collection_name].find_one({
-            'StockName': message_dict['StockName']
+            'StockName': message_dict['StockName'],
+            'UserId': message_dict['UserId']
             }
         )
         # if we have disticnt data then replace
         if existing_doc:
-            self.database[collection_name].replace_one({'StockName': existing_doc['StockName']}, message_dict)
+            self.database[collection_name].replace_one({
+                'StockName': existing_doc['StockName'],
+                'UserId': message_dict['UserId']
+                }, message_dict)
             print("replace the message")
         else:
             self.database[collection_name].insert_one(message_dict)
