@@ -52,7 +52,7 @@ async def stock_amount_received(update: Update, context: CallbackContext):
     # Store in the database
     db.upsert(message)
 
-    await update.message.reply_text(f"Stock {stock_name} (Amount: {stock_amount}) has been added to your stocks!")
+    await update.message.reply_text(f"Stock {stock_name} (Amount: {stock_amount}) has been added to your profile!")
     return ConversationHandler.END
 
 async def cancel(update: Update, context: CallbackContext):
@@ -69,3 +69,15 @@ add_stock_conversation = ConversationHandler(
     fallbacks=[CommandHandler("cancel", cancel)],
 )
 
+async def show_stocks_handler(update: Update, context: CallbackContext):
+    """Handler to display the user's stocks."""
+    user_id = update.message.from_user.id
+    stocks = db.get_stocks(user_id)
+    
+    if not stocks:
+        await update.message.reply_text("You have no stocks in your profile.")
+        return
+
+    # Format the stock list
+    stock_list = "\n".join([f"{stock['StockName']}: {stock['StockAmount']}" for stock in stocks])
+    await update.message.reply_text(f"📊 Your Stocks:\n{stock_list}")

@@ -8,13 +8,9 @@ class AgentDataBase:
         self.database = self.client[db_name]
         self.collection = self.database[collection_name]
 
-    def find_stocks(self, user_id, collection_name="Stocks"):
+    def get_stocks(self, user_id, collection_name="Stocks"):
         stocks_docs = self.database[collection_name].find({'UserID': user_id})
-        if stocks_docs:
-            for doc in stocks_docs:
-                print(f"{doc['StockName']} : {doc['StockAmount']}")
-        else:
-            print(f"No found: {user_id}")
+        return stocks_docs
 
     # for insert document into database
     # if document exist replace into database
@@ -30,16 +26,16 @@ class AgentDataBase:
                 'StockName': existing_doc['StockName'],
                 'UserId': message_dict['UserID']
                 }, message_dict)
-            print("replace the message")
+            print("replace the stock")
         else:
             self.database[collection_name].insert_one(message_dict)
-            print("insert the message")
+            print("insert the stock")
 
     # delete document
     def delete(self, message_dict, collection_name):
         result = self.database[collection_name].delete_one(message_dict)
         if result.deleted_count > 0:
-            print("The message was deleted successfully")
+            print("The stock was deleted successfully")
         else:
             print("No matching document found to delete")
 

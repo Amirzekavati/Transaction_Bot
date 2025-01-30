@@ -1,7 +1,6 @@
 from telegram.ext import Application
 from config import BOT_TOKEN
 from commands import get_handlers
-import asyncio
 
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
