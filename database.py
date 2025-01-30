@@ -1,4 +1,4 @@
-from pymongo import MongoClient, UpdateOne
+from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
 class AgentDataBase:
