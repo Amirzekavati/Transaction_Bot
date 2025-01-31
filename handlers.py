@@ -6,6 +6,7 @@ STOCK_NAME, STOCK_AMOUNT = range(2)
 STOCK_TO_REMOVE = range(1)
 
 USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "ℹ️ Help"], ["❌ Cancel"]]
+# KEY_WORDS = {"📈 add Stock", "📉 remove Stock", "📊 show stocks", "ℹ️ Help", "❌ Cancel"}
 # ADMIN_OPTIONS = [["📢 Manage Channel", "🔍 Analyze Trends"], ["⚙️ Settings", "📊 Portfolio"], ["ℹ️ Help"]]
 
 async def start(update: Update, context: CallbackContext):
@@ -27,12 +28,12 @@ async def start(update: Update, context: CallbackContext):
         
 async def help(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
-    print(f"{user_id} want to see your help")
+    print(f"{user_id} triggered /help command")
     if user_id in ALLOWED_USERS_ID:
-        print(f"✅{user_id} see help of bot")
+        print(f"✅ {user_id} accessed help menu")
         await update.message.reply_text("This bot is for help to buying and selling stock.")
     else:
-        print(f"❌{user_id} user can't see help of bot")
+        print(f"❌ {user_id} is unauthorized to access help")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
     
 async def start_add_stock(update: Update, context: CallbackContext):
@@ -51,8 +52,15 @@ async def stock_name_received(update: Update, context: CallbackContext):
     """Receives the stock name and asks for the amount."""
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
-        context.user_data["stock_name"] = update.message.text
-        print(f"✅{user_id} inputed the name of stock: {context.user_data['stock_name']}")
+        stock_name = update.message.text.strip()
+        context.user_data["stock_name"] = stock_name
+        
+        if stock_name == "❌ Cancel":
+            print(f"{user_id} click on button {stock_name} between conversation for adding stock")
+            return await cancel(update, context)
+    
+        
+        print(f"✅{user_id} inputed the name of stock: {stock_name}")
         
         await update.message.reply_text("How many units of this stock do you want to add?")
         return STOCK_AMOUNT
@@ -107,7 +115,7 @@ add_stock_conversation = ConversationHandler(
             MessageHandler(filters.Regex("❌ Cancel"), cancel),  # Handle cancel button
             ],
     },
-    fallbacks=[CommandHandler("cancel", cancel)],
+    fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
 
 async def show_stocks_handler(update: Update, context: CallbackContext):
@@ -166,5 +174,5 @@ remove_stock_conversation = ConversationHandler(
             MessageHandler(filters.Regex("❌ Cancel"), cancel),  # Handle cancel button
             ],
     },
-    fallbacks=[CommandHandler("cancel", cancel)],
+    fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
