@@ -3,6 +3,7 @@ from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, M
 from config import ALLOWED_USERS_ID, db
 
 STOCK_NAME, STOCK_AMOUNT = range(2)
+STOCK_TO_REMOVE = range(1)
 
 USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "ℹ️ Help"]]
 # ADMIN_OPTIONS = [["📢 Manage Channel", "🔍 Analyze Trends"], ["⚙️ Settings", "📊 Portfolio"], ["ℹ️ Help"]]
