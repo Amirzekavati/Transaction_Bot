@@ -32,12 +32,14 @@ class AgentDataBase:
             print("insert the stock")
 
     # delete document
-    def delete(self, message_dict, collection_name):
-        result = self.database[collection_name].delete_one(message_dict)
+    def delete(self, user_id, stock_name, collection_name="Stocks"):
+        result = self.database[collection_name].delete_one({"UserID": user_id, "StockName": stock_name})
         if result.deleted_count > 0:
-            print("The stock was deleted successfully")
+            # print("The stock was deleted successfully")
+            return True
         else:
-            print("No matching document found to delete")
+            # print("No matching document found to delete")
+            return False
 
     #delete collection
     def remove_collection(self, collection_name):
