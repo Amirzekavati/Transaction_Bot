@@ -73,7 +73,8 @@ async def stock_amount_received(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
         stock_name = context.user_data["stock_name"]
-        stock_amount = int(update.message.text)
+        stock_amount = int(update.message.text.strip())
+        
         print(f"✅{user_id} inputed the amount of stock: {stock_amount}")
     
         message = {
