@@ -2,25 +2,25 @@ from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
 class AgentDataBase:
-    def __init__(self, client='mongodb://localhost:27017/', db_name='Transaction', collection_name='Stocks'):
+    def __init__(self, client='mongodb://localhost:27017/', db_name='Transaction', collection_name='Bot Stocks'):
         # initialize database
         self.client = MongoClient(client)
         self.database = self.client[db_name]
         self.collection = self.database[collection_name]
 
-    def get_stocks(self, user_id, collection_name="Stocks"):
+    def get_stocks(self, user_id, collection_name="Bot Stocks"):
         stocks_docs = self.database[collection_name].find({'UserID': user_id})
         return stocks_docs
 
     # for insert document into database
     # if document exist replace into database
-    def upsert(self, message_dict ,collection_name="Stocks"):
+    def upsert(self, message_dict, collection_name="Bot Stocks"):
         existing_doc = self.database[collection_name].find_one({
             'StockName': message_dict['StockName'],
             'UserId': message_dict['UserID']
             }
         )
-        # if we have disticnt data then replace
+        # if we have distinct data then replace
         if existing_doc:
             self.database[collection_name].replace_one({
                 'StockName': existing_doc['StockName'],
@@ -32,7 +32,7 @@ class AgentDataBase:
             print("insert the stock")
 
     # delete document
-    def delete(self, user_id, stock_name, collection_name="Stocks"):
+    def delete(self, user_id, stock_name, collection_name="Bot Stocks"):
         result = self.database[collection_name].delete_one({"UserID": user_id, "StockName": stock_name})
         if result.deleted_count > 0:
             # print("The stock was deleted successfully")

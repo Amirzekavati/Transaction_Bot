@@ -1,6 +1,6 @@
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, MessageHandler, filters
-from config import ALLOWED_USERS_ID, db
+from config import ALLOWED_USERS_ID, database
 
 STOCK_NAME, STOCK_AMOUNT = range(2)
 STOCK_TO_REMOVE = range(1)
@@ -11,10 +11,10 @@ USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "�
 
 async def start(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
-    print (f"ALLOWED_USERS_ID:  {ALLOWED_USERS_ID}")
-    print (f"{user_id} attempting to join")
+    print(f"ALLOWED_USERS_ID:  {ALLOWED_USERS_ID}")
+    print(f"{user_id} attempting to join")
     if user_id in ALLOWED_USERS_ID:
-        print(f"✅join successfuly : {user_id}")
+        print(f"✅join successfully : {user_id}")
         keyboard = USER_OPTIONS
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
         
@@ -58,9 +58,8 @@ async def stock_name_received(update: Update, context: CallbackContext):
         if stock_name == "❌ Cancel":
             print(f"{user_id} click on button {stock_name} between conversation for adding stock")
             return await cancel(update, context)
-    
-        
-        print(f"✅{user_id} inputed the name of stock: {stock_name}")
+
+        print(f"✅{user_id} inputted the name of stock: {stock_name}")
         
         await update.message.reply_text("How many units of this stock do you want to add?")
         return STOCK_AMOUNT
@@ -74,8 +73,8 @@ async def stock_amount_received(update: Update, context: CallbackContext):
     if user_id in ALLOWED_USERS_ID:
         stock_name = context.user_data["stock_name"]
         stock_amount = int(update.message.text.strip())
-        
-        print(f"✅{user_id} inputed the amount of stock: {stock_amount}")
+           
+        print(f"✅{user_id} inputted the amount of stock: {stock_amount}")
     
         message = {
             "UserID": user_id,
@@ -84,7 +83,7 @@ async def stock_amount_received(update: Update, context: CallbackContext):
         }
         
         # Store in the database
-        db.upsert(message)
+        database.upsert(message)
         print(f"✅{user_id} added/updated stock: {message}")
         
         await update.message.reply_text(f"Stock {stock_name} (Amount: {stock_amount}) has been added to your profile!")
@@ -124,7 +123,7 @@ async def show_stocks_handler(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
     print(f"{user_id} wants to see profile's stocks")
     if user_id in ALLOWED_USERS_ID:
-        stocks = db.get_stocks(user_id)
+        stocks = database.get_stocks(user_id)
         if not stocks:
             await update.message.reply_text("You have no stocks in your profile.")
             return
