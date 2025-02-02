@@ -37,8 +37,8 @@ for var in required_vars:
     if not globals()[var]:
         raise ValueError(f"Missing required environment variable: {var}")
     
-db = AgentDataBase()
-db.check_connection()
+database = AgentDataBase()
+database.check_connection()
 
 print(f"✅ Config Loaded: Prefix={BOT_PREFIX}, Debug={DEBUG_MODE}")
 
