@@ -46,7 +46,7 @@ class AgentDataBase:
             # print("No matching document found to delete")
             return False
 
-    #delete collection
+    # delete collection
     def remove_collection(self, collection_name):
         self.database[collection_name].drop()
         print(f"Collection '{collection_name}' dropped successfully")

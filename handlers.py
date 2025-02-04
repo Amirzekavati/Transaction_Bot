@@ -1,5 +1,5 @@
 from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, MessageHandler, filters
+from telegram.ext import CallbackContext, ConversationHandler, MessageHandler, filters
 from config import ALLOWED_USERS_ID, database
 
 STOCK_NAME, STOCK_AMOUNT = range(2)
@@ -86,7 +86,6 @@ async def stock_amount_received(update: Update, context: CallbackContext):
         # Store in the database
         database.upsert(message)
         print(f"✅{user_id} added/updated stock: {message}")
-
 
         await update.message.reply_text(f"Stock {stock_name} (Amount: {stock_amount}) has been added to your profile!")
         return ConversationHandler.END
@@ -178,4 +177,3 @@ remove_stock_conversation = ConversationHandler(
     },
     fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
-
