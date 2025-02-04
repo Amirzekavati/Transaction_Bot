@@ -1,5 +1,5 @@
 from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import CallbackContext, CommandHandler, ConversationHandler, MessageHandler, filters
+from telegram.ext import CallbackContext, ConversationHandler, MessageHandler, filters
 from config import ALLOWED_USERS_ID, database
 
 STOCK_NAME, STOCK_AMOUNT = range(2)
@@ -38,7 +38,6 @@ async def help(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
 
 async def start_add_stock(update: Update, context: CallbackContext):
-    """Starts the conversation for adding a stock."""
     user_id = update.message.from_user.id
     print(f"{user_id} attempting to adding stock")
     if user_id in ALLOWED_USERS_ID:
@@ -50,7 +49,6 @@ async def start_add_stock(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
 
 async def stock_name_received(update: Update, context: CallbackContext):
-    """Receives the stock name and asks for the amount."""
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
         stock_name = update.message.text.strip()
@@ -69,7 +67,6 @@ async def stock_name_received(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
 
 async def stock_amount_received(update: Update, context: CallbackContext):
-    """Receives the stock amount, stores it in the database, and confirms."""
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
         stock_name = context.user_data["stock_name"]
@@ -83,10 +80,8 @@ async def stock_amount_received(update: Update, context: CallbackContext):
             "StockAmount": stock_amount,
         }
 
-        # Store in the database
         database.upsert(message)
         print(f"✅{user_id} added/updated stock: {message}")
-
 
         await update.message.reply_text(f"Stock {stock_name} (Amount: {stock_amount}) has been added to your profile!")
         return ConversationHandler.END
@@ -95,7 +90,6 @@ async def stock_amount_received(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
 
 async def cancel(update: Update, context: CallbackContext):
-    """Handles cancellation of stock addition."""
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
         print(f"📢{user_id} click on cancel operation")
@@ -110,18 +104,17 @@ add_stock_conversation = ConversationHandler(
     states={
         STOCK_NAME: [
             MessageHandler(filters.TEXT & ~filters.COMMAND, stock_name_received),
-            MessageHandler(filters.Regex("❌ Cancel"), cancel),  # Handle cancel button
+            MessageHandler(filters.Regex("❌ Cancel"), cancel),
             ],
         STOCK_AMOUNT: [
             MessageHandler(filters.TEXT & filters.Regex("^[0-9]+$"), stock_amount_received),
-            MessageHandler(filters.Regex("❌ Cancel"), cancel),  # Handle cancel button
+            MessageHandler(filters.Regex("❌ Cancel"), cancel),
             ],
     },
     fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
 
 async def show_stocks_handler(update: Update, context: CallbackContext):
-    """Handler to display the user's stocks."""
     user_id = update.message.from_user.id
     print(f"{user_id} wants to see profile's stocks")
     if user_id in ALLOWED_USERS_ID:
@@ -130,7 +123,6 @@ async def show_stocks_handler(update: Update, context: CallbackContext):
             await update.message.reply_text("You have no stocks in your profile.")
             return
 
-        # Format the stock list
         stock_list = "\n".join([f"{stock['StockName']}: {stock['StockAmount']}" for stock in stocks])
         print(f"✅{user_id} user see all stocks: \n{stock_list}")
         await update.message.reply_text(f"📊 Your Stocks:\n{stock_list}\n.")
@@ -139,7 +131,6 @@ async def show_stocks_handler(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
 
 async def start_remove_stock(update: Update, context: CallbackContext):
-    """Starts the conversation for removing a stock"""
     user_id = update.message.from_user.id
     print(f"{user_id} attempting to removing")
     if user_id in ALLOWED_USERS_ID:
@@ -151,12 +142,11 @@ async def start_remove_stock(update: Update, context: CallbackContext):
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
 
 async def stock_to_remove_received(update: Update, context: CallbackContext):
-    """Receives the stock name and removes it from the database."""
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
         stock_name = update.message.text
         delete_result = database.delete(user_id, stock_name)
-        if delete_result:  # Assuming db.delete() returns a success flag
+        if delete_result:
             print(f"✅{user_id} removing successfully {stock_name}")
             await update.message.reply_text(f"✅ Stock '{stock_name}' has been removed from your profile.")
         else:
@@ -178,4 +168,3 @@ remove_stock_conversation = ConversationHandler(
     },
     fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
-

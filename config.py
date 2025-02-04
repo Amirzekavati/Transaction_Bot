@@ -28,7 +28,7 @@ else:
     print("Bot is running in production mode.")
 
 MAX_MESSAGES_PER_HOUR = int(os.getenv("MAX_MESSAGES_PER_HOUR", "200"))
-MESSAGE_DELAY = int(os.getenv("MESSAGE_DELAY","1"))
+MESSAGE_DELAY = int(os.getenv("MESSAGE_DELAY", "1"))
 
 USE_HTTPS = os.getenv("USE_HTTPS", "True").lower() == "true" 
 
@@ -41,4 +41,3 @@ database = AgentDataBase()
 database.check_connection()
 
 print(f"✅ Config Loaded: Prefix={BOT_PREFIX}, Debug={DEBUG_MODE}")
-
