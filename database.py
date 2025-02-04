@@ -8,7 +8,12 @@ class AgentDataBase:
         self.database = self.client[db_name]
         self.collection = self.database[collection_name]
 
-    def get_stocks(self, user_id, collection_name="Bot Stocks"):
+    def get_all_users(self):
+        """Returns a list of all unique user IDs that have stocks in the database."""
+        return self.database["Bot Stocks"].distinct("UserID")
+
+    def get_user_stocks(self, user_id, collection_name="Bot Stocks"):
+        """Fetches all stocks for a given user."""
         stocks_docs = self.database[collection_name].find({'UserID': user_id})
         return stocks_docs
 

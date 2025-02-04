@@ -5,6 +5,7 @@ from config import ALLOWED_USERS_ID, database
 STOCK_NAME, STOCK_AMOUNT = range(2)
 STOCK_TO_REMOVE = range(1)
 
+
 USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "ℹ️ Help"], ["❌ Cancel"]]
 # KEY_WORDS = {"📈 add Stock", "📉 remove Stock", "📊 show stocks", "ℹ️ Help", "❌ Cancel"}
 # ADMIN_OPTIONS = [["📢 Manage Channel", "🔍 Analyze Trends"], ["⚙️ Settings", "📊 Portfolio"], ["ℹ️ Help"]]
@@ -17,7 +18,7 @@ async def start(update: Update, context: CallbackContext):
         print(f"✅join successfully : {user_id}")
         keyboard = USER_OPTIONS
         reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
-        
+
         await update.message.reply_text(
             "Welcome, you're authorized to use this bot!",
             reply_markup=reply_markup
@@ -25,7 +26,7 @@ async def start(update: Update, context: CallbackContext):
     else:
         print(f"❌{user_id} user can't join")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
-        
+
 async def help(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
     print(f"{user_id} triggered /help command")
@@ -35,7 +36,7 @@ async def help(update: Update, context: CallbackContext):
     else:
         print(f"❌ {user_id} is unauthorized to access help")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
-    
+
 async def start_add_stock(update: Update, context: CallbackContext):
     """Starts the conversation for adding a stock."""
     user_id = update.message.from_user.id
@@ -54,13 +55,13 @@ async def stock_name_received(update: Update, context: CallbackContext):
     if user_id in ALLOWED_USERS_ID:
         stock_name = update.message.text.strip()
         context.user_data["stock_name"] = stock_name
-        
+
         if stock_name == "❌ Cancel":
             print(f"{user_id} click on button {stock_name} between conversation for adding stock")
             return await cancel(update, context)
 
         print(f"✅{user_id} inputted the name of stock: {stock_name}")
-        
+
         await update.message.reply_text("How many units of this stock do you want to add?")
         return STOCK_AMOUNT
     else:
@@ -73,19 +74,20 @@ async def stock_amount_received(update: Update, context: CallbackContext):
     if user_id in ALLOWED_USERS_ID:
         stock_name = context.user_data["stock_name"]
         stock_amount = int(update.message.text.strip())
-           
+
         print(f"✅{user_id} inputted the amount of stock: {stock_amount}")
-    
+
         message = {
             "UserID": user_id,
             "StockName": stock_name,
             "StockAmount": stock_amount,
         }
-        
+
         # Store in the database
         database.upsert(message)
         print(f"✅{user_id} added/updated stock: {message}")
-        
+
+
         await update.message.reply_text(f"Stock {stock_name} (Amount: {stock_amount}) has been added to your profile!")
         return ConversationHandler.END
     else:
@@ -135,7 +137,7 @@ async def show_stocks_handler(update: Update, context: CallbackContext):
     else:
         print(f"❌{user_id} user can't join")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
-        
+
 async def start_remove_stock(update: Update, context: CallbackContext):
     """Starts the conversation for removing a stock"""
     user_id = update.message.from_user.id
@@ -147,15 +149,15 @@ async def start_remove_stock(update: Update, context: CallbackContext):
     else:
         print(f"❌{user_id} user can't join")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
-        
+
 async def stock_to_remove_received(update: Update, context: CallbackContext):
-    """Recieves the stock name and removes it from the database."""
+    """Receives the stock name and removes it from the database."""
     user_id = update.message.from_user.id
     if user_id in ALLOWED_USERS_ID:
         stock_name = update.message.text
-        delete_result = db.delete(user_id, stock_name)
+        delete_result = database.delete(user_id, stock_name)
         if delete_result:  # Assuming db.delete() returns a success flag
-            print(f"✅{user_id} removing successfuly {stock_name}")
+            print(f"✅{user_id} removing successfully {stock_name}")
             await update.message.reply_text(f"✅ Stock '{stock_name}' has been removed from your profile.")
         else:
             print(f"⚠️ No stock named '{stock_name}' found in your {user_id}'s profile.")
@@ -165,7 +167,7 @@ async def stock_to_remove_received(update: Update, context: CallbackContext):
     else:
         print(f"❌{user_id} user can't join")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")
-        
+
 remove_stock_conversation = ConversationHandler(
     entry_points=[MessageHandler(filters.Regex("📉 remove Stock"), start_remove_stock)],
     states={
@@ -176,3 +178,4 @@ remove_stock_conversation = ConversationHandler(
     },
     fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
+
