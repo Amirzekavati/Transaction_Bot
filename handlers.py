@@ -118,7 +118,7 @@ async def show_stocks_handler(update: Update, context: CallbackContext):
     user_id = update.message.from_user.id
     print(f"{user_id} wants to see profile's stocks")
     if user_id in ALLOWED_USERS_ID:
-        stocks = database.get_stocks(user_id)
+        stocks = database.get_user_stocks(user_id)
         if not stocks:
             await update.message.reply_text("You have no stocks in your profile.")
             return
@@ -126,6 +126,7 @@ async def show_stocks_handler(update: Update, context: CallbackContext):
         stock_list = "\n".join([f"{stock['StockName']}: {stock['StockAmount']}" for stock in stocks])
         print(f"✅{user_id} user see all stocks: \n{stock_list}")
         await update.message.reply_text(f"📊 Your Stocks:\n{stock_list}\n.")
+
     else:
         print(f"❌{user_id} user can't join")
         await update.message.reply_text("Sorry, you're not authorized to use this bot.")

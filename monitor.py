@@ -33,4 +33,4 @@ async def check_stock_volumes():
                 except Exception as e:
                     print(f"⚠️ Error checking stock {stock_name}: {e}")
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(10)
