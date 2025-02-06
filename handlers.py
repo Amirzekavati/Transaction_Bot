@@ -6,7 +6,7 @@ STOCK_NAME, STOCK_AMOUNT = range(2)
 STOCK_TO_REMOVE = range(1)
 
 
-USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "ℹ️ Help"], ["❌ Cancel"]]
+USER_OPTIONS = [["📈 add Stock", "📉 remove Stock"], ["📊 show stocks", "ℹ️ Help"], ["❌ Cancel"], ["🗑 Remove All Stocks"]]
 # KEY_WORDS = {"📈 add Stock", "📉 remove Stock", "📊 show stocks", "ℹ️ Help", "❌ Cancel"}
 # ADMIN_OPTIONS = [["📢 Manage Channel", "🔍 Analyze Trends"], ["⚙️ Settings", "📊 Portfolio"], ["ℹ️ Help"]]
 
@@ -169,3 +169,20 @@ remove_stock_conversation = ConversationHandler(
     },
     fallbacks=[MessageHandler(filters.Regex("❌ Cancel"), cancel),],
 )
+
+
+async def remove_all_stocks(update: Update, context: CallbackContext):
+    user_id = update.message.from_user.id
+    print(f"{user_id} attempting to remove all stocks")
+
+    if user_id in ALLOWED_USERS_ID:
+        delete_result = database.delete_all(user_id)
+        if delete_result:
+            print(f"✅ {user_id} successfully removed all stocks")
+            await update.message.reply_text("✅ All stocks have been removed from your profile.")
+        else:
+            print(f"⚠️ No stocks found for {user_id}")
+            await update.message.reply_text("⚠️ No stocks found in your profile.")
+    else:
+        print(f"❌ {user_id} is not authorized")
+        await update.message.reply_text("Sorry, you're not authorized to use this bot.")

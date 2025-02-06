@@ -39,4 +39,4 @@ def run_crawler():
                 except Exception as e:
                     print(f"⚠️ Error checking stock {stock_name}: {e}")
 
-        # time.sleep(10)
+        time.sleep(5)

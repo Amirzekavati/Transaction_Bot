@@ -30,6 +30,13 @@ class AgentDataBase:
             self.database[collection_name].insert_one(message_dict)
             print("insert the stock")
 
+    def delete_all(self, user_id, collection_name="Bot Stocks"):
+        result = self.database[collection_name].delete_many({"UserID": user_id})
+        if result.deleted_count > 0:
+            return True
+        else:
+            return False
+
     def delete(self, user_id, stock_name, collection_name="Bot Stocks"):
         result = self.database[collection_name].delete_one({"UserID": user_id, "StockName": stock_name})
         if result.deleted_count > 0:
